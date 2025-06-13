@@ -14,7 +14,7 @@ public class User
         Login = login;
         Name = name;
         Email = email;
-        Password = password; //в будущем передадим сюда хеш
+        Password = password; 
     }
 
     public string Id { get; init; }
