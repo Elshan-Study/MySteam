@@ -8,4 +8,8 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="UI\Menus\" />
+    </ItemGroup>
+
 </Project>
