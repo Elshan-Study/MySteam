@@ -36,7 +36,7 @@ public static class PasswordHasher
     /// <param name="hashedPassword">Hash from database</param>
     /// <returns>true if the password is correct; otherwise false</returns>
     /// </summary>
-    public static bool Verify(string password, string hashedPassword)
+    public static bool Verify(string? password, string hashedPassword)
     {
         try
         {
@@ -47,14 +47,21 @@ public static class PasswordHasher
             var salt = Convert.FromBase64String(parts[1]);
             var hash = Convert.FromBase64String(parts[2]);
 
-            var inputHash = Rfc2898DeriveBytes.Pbkdf2(
-                password,
-                salt,
-                iterations,
-                HashAlgorithmName.SHA256,
-                hash.Length);
+            if (password != null)
+            {
+                var inputHash = Rfc2898DeriveBytes.Pbkdf2(
+                    password,
+                    salt,
+                    iterations,
+                    HashAlgorithmName.SHA256,
+                    hash.Length);
 
-            return CryptographicOperations.FixedTimeEquals(inputHash, hash);
+                return CryptographicOperations.FixedTimeEquals(inputHash, hash);
+            }
+            else
+            {
+                return false;
+            }
         }
         catch  (Exception ex)
         {
