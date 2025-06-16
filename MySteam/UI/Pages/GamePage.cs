@@ -27,7 +27,7 @@ public static class GamePage
             Console.WriteLine("------------------------------------------------");
             Console.WriteLine($"{CurrentGame.Name} ({CurrentGame.AverageRating}/5)");
             Console.WriteLine(CurrentGame.Description);
-            Console.WriteLine($"Price: {CurrentGame.Price}");
+            Console.WriteLine($"Price: {CurrentGame.Price:C}");
 
             if (CurrentGame.Tags is { Count: > 0 })
                 Console.WriteLine(string.Join(" ", CurrentGame.Tags.Select(t => $"|{t}|")));
@@ -48,9 +48,7 @@ public static class GamePage
                     RateGame();
                     break;
                 case "2":
-                    if (AccountManager.CurrentUser != null &&
-                        !AccountManager.CurrentUser.Games.Contains(CurrentGame.Name))
-                        BuyGame();
+                    BuyGame();
                     break;
                 case "3":
                     LeaveComment();
@@ -66,14 +64,26 @@ public static class GamePage
 
     private static void RateGame()
     {
+        var user = AccountManager.CurrentUser;
+
+        if (user == null)
+        {
+            Logger.Log("[GamePage] Anonymous user attempted to rate a game.");
+            Console.WriteLine("You must be logged in to rate.");
+            Pause();
+            return;
+        }
+
         Console.Write("Enter your rating (1-5): ");
         var input = Console.ReadLine();
 
         if (int.TryParse(input, out var rating) && rating is >= 1 and <= 5)
         {
-            CurrentGame!.Ratings.Add(rating);
-            Logger.Log($"[GamePage] {AccountManager.CurrentUser?.Login} rated {CurrentGame.Name} as {rating}/5");
-            Console.WriteLine("Thank you for your rating!");
+            bool isNew = !CurrentGame!.Ratings.ContainsKey(user.Id);
+            CurrentGame.Ratings[user.Id] = rating;
+
+            Logger.Log($"[GamePage] {user.Login} {(isNew ? "rated" : "updated rating for")} {CurrentGame.Name} as {rating}/5");
+            Console.WriteLine($"Your rating{(isNew ? "" : " has been updated")}.");
         }
         else
         {
@@ -86,12 +96,22 @@ public static class GamePage
 
     private static void BuyGame()
     {
-        if (AccountManager.CurrentUser == null)
-        {Console.WriteLine("You are not logged in."); return;}
-        
         var user = AccountManager.CurrentUser;
 
-        if (user.Balance < CurrentGame!.Price)
+        if (user == null)
+        {
+            Console.WriteLine("You are not logged in.");
+            return;
+        }
+
+        if (user.Games.Contains(CurrentGame!.Name))
+        {
+            Console.WriteLine("You already own this game.");
+            Pause();
+            return;
+        }
+
+        if (user.Balance < CurrentGame.Price)
         {
             Logger.Log($"[GamePage] {user.Login} tried to buy {CurrentGame.Name} but had insufficient balance.");
             Console.WriteLine($"Not enough balance. Game costs {CurrentGame.Price:C}, your balance is {user.Balance:C}.");
@@ -133,7 +153,6 @@ public static class GamePage
         var comment = new Comment(user.Name, user.Id, CurrentGame!.Id, message);
         CurrentGame.Comments.Add(comment);
         Database.Comments.Add(comment);
-        Database.SaveAll();
 
         Logger.Log($"[GamePage] {user.Login} left comment on {CurrentGame.Name}: \"{message}\"");
         Console.WriteLine("Comment posted!");
