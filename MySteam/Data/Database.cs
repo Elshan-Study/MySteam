@@ -25,7 +25,12 @@ internal static class Database
     /// <summary>
     /// List of all games in the global library.
     /// </summary>
-    public static List<Game> Games { get; private set; } = [];
+    public static List<Game>? Games { get; private set; } = [];
+    
+    /// <summary>
+    /// List of all comments for all games.
+    /// </summary>
+    public static List<Comment> Comments { get; private set; } = [];
 
     /// <summary>
     /// Loads all data (users, games, comments) from the corresponding JSON files.
@@ -34,6 +39,7 @@ internal static class Database
     {
         Users = Load<List<User>>($"{BasePath}/users.json") ?? [];
         Games = Load<List<Game>>($"{BasePath}/games.json") ?? [];
+        Comments = Load<List<Comment>>($"{BasePath}/comments.json") ?? [];
     }
 
     /// <summary>
@@ -43,6 +49,7 @@ internal static class Database
     {
         Save($"{BasePath}/users.json", Users);
         Save($"{BasePath}/games.json", Games);
+        Save($"{BasePath}/comments.json", Comments);
     }
 
     /// <summary>

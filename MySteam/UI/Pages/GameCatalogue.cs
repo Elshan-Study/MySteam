@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MySteam.Data;
 using MySteam.Models;
+using MySteam.Services; 
 
 namespace MySteam.UI.Pages;
 
@@ -22,7 +23,7 @@ public static class GameCatalogue
             Console.WriteLine("Commands:");
             Console.WriteLine("1. Search by name");
             Console.WriteLine("2. Search by tag");
-            Console.WriteLine("3. Show game page");
+            Console.WriteLine("3. Show game page by number");
             Console.WriteLine("Other - Exit");
             Console.Write("Choice: ");
 
@@ -37,7 +38,7 @@ public static class GameCatalogue
                     SearchGameByTag();
                     break;
                 case "3":
-                    ShowGamePage();
+                    ShowGamePageByNumber(Database.Games);
                     break;
                 default:
                     return false;
@@ -45,28 +46,23 @@ public static class GameCatalogue
         }
     }
 
-    private static void DisplayGames(List<Game> games)
+    private static void DisplayGames(List<Game>? games)
     {
-        if (!games.Any())
+        if (games == null || games.Count == 0)
         {
             Console.WriteLine("No games found.");
             return;
         }
 
-        foreach (var game in games)
+        for (int i = 0; i < games.Count; i++)
         {
-            if (game != null)
-                PrintGameInfo(game);
+            var game = games[i];
+            Console.WriteLine($"{i + 1}. {game.Name} ({Math.Round(game.AverageRating, 2)}/5)");
+            Console.WriteLine(game.Description);
+            if (game.Tags is { Count: > 0 })
+                Console.WriteLine(string.Join(" ", game.Tags.Select(t => $"|{t}|")));
+            Console.WriteLine();
         }
-    }
-
-    private static void PrintGameInfo(Game game)
-    {
-        Console.WriteLine($"{game.Name} ({game.AverageRating}/5)");
-        Console.WriteLine(game.Description);
-        if (game.Tags != null)
-            Console.WriteLine(string.Join(" ", game.Tags.Select(t => $"|{t}|")));
-        Console.WriteLine();
     }
 
     private static void SearchGameByName()
@@ -75,18 +71,11 @@ public static class GameCatalogue
         Console.Write("Enter game name or part of it: ");
         var input = Console.ReadLine()?.Trim();
 
-        var foundGames = Database.Games
-            .Where(g => g.Name.Contains(input ?? "", StringComparison.OrdinalIgnoreCase))
-            .ToList();
-
-        Console.Clear();
-        Console.WriteLine("Search results:");
-        Console.WriteLine("----------------------------------------------");
-        DisplayGames(foundGames);
-
-        if (PromptGamePage())
+        if (input != null)
         {
-            ShowGamePage();
+            var foundGames = SearchService.SearchByName(input);
+
+            ShowSearchResults(foundGames);
         }
     }
 
@@ -96,52 +85,59 @@ public static class GameCatalogue
         Console.Write("Enter tag: ");
         var input = Console.ReadLine()?.Trim();
 
-        var foundGames = Database.Games
-            .Where(g => g.Tags != null && g.Tags.Any(t => t.Equals(input, StringComparison.OrdinalIgnoreCase)))
-            .ToList();
-
-        Console.Clear();
-        Console.WriteLine("Search results:");
-        Console.WriteLine("----------------------------------------------");
-        DisplayGames(foundGames);
-
-        if (PromptGamePage())
+        if (input != null)
         {
-            ShowGamePage();
+            var foundGames = SearchService.SearchByTag(input);
+
+            ShowSearchResults(foundGames);
         }
     }
 
-    private static bool PromptGamePage()
+    private static void ShowSearchResults(List<Game>? foundGames)
     {
+        Console.Clear();
+        Console.WriteLine("Search results:");
         Console.WriteLine("----------------------------------------------");
-        Console.WriteLine("Commands:");
-        Console.WriteLine("1. Show game page");
-        Console.WriteLine("Other - Back");
+
+        if (foundGames is { Count: 0 })
+        {
+            Console.WriteLine("No games found.");
+            Pause();
+            return;
+        }
+
+        DisplayGames(foundGames);
+
+        Console.WriteLine("----------------------------------------------");
+        Console.WriteLine("Enter game number to view details, or press Enter to go back:");
         Console.Write("Choice: ");
         var input = Console.ReadLine();
 
-        return input == "1";
+        if (int.TryParse(input, out int choice) && choice >= 1 && foundGames != null && choice <= foundGames.Count)
+        {
+            GamePage.CurrentGame = foundGames[choice - 1];
+            Console.Clear();
+            GamePage.Show();
+            Pause();
+        }
     }
 
-    private static void ShowGamePage()
+    private static void ShowGamePageByNumber(List<Game>? games)
     {
         Console.Clear();
-        Console.Write("Enter exact game name: ");
-        var input = Console.ReadLine()?.Trim();
+        Console.WriteLine("Enter game number to view details:");
+        var input = Console.ReadLine();
 
-        var game = Database.Games
-            .FirstOrDefault(g => g.Name.Equals(input, StringComparison.OrdinalIgnoreCase));
-
-        if (game != null)
+        if (int.TryParse(input, out int choice) && choice >= 1 && games != null && choice <= games.Count)
         {
-            GamePage.CurrentGame = game;
+            GamePage.CurrentGame = games[choice - 1];
             Console.Clear();
             GamePage.Show();
             Pause();
         }
         else
         {
-            Console.WriteLine("Game not found.");
+            Console.WriteLine("Invalid choice.");
             Pause();
         }
     }
@@ -149,6 +145,6 @@ public static class GameCatalogue
     private static void Pause(string message = "Press any key to continue...")
     {
         Console.WriteLine(message);
-        Console.ReadKey();
+        Console.ReadKey(true);
     }
 }

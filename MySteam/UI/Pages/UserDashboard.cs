@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MySteam.Data;
 using MySteam.Services;
+using MySteam.Utilities;
 
 namespace MySteam.UI.Pages;
 
@@ -29,6 +30,8 @@ public static class UserDashboard
             Console.WriteLine("2. Show hidden game");
             Console.WriteLine("3. Top up balance");
             Console.WriteLine("4. View Game Catalogue");
+            Console.WriteLine("5. Search my games");
+            Console.WriteLine("6. Search hidden games");
             Console.WriteLine("Any other key to Exit");
 
             Console.Write("Your choice: ");
@@ -49,6 +52,12 @@ public static class UserDashboard
                     Console.Clear();
                     GameCatalogue.Show();
                     break;
+                case "5":
+                    SearchGames(AccountManager.CurrentUser!.Games, "Your Games");
+                    break;
+                case "6":
+                    SearchGames(AccountManager.CurrentUser!.HiddenGames, "Hidden Games");
+                    break;
                 default:
                     return false;
             }
@@ -58,23 +67,26 @@ public static class UserDashboard
     private static void DisplayGames(List<string> gameNames, string title)
     {
         Console.WriteLine(title + ":");
-        var games = Database.Games
-            .Where(g => gameNames.Contains(g.Name))
-            .ToList();
-
-        if (!games.Any())
+        if (Database.Games != null)
         {
-            Console.WriteLine("No games to show.");
-            return;
-        }
+            var games = Database.Games
+                .Where(g => gameNames.Contains(g.Name))
+                .ToList();
 
-        foreach (var game in games)
-        {
-            Console.WriteLine($"- {game.Name} ({game.AverageRating}/5)");
-            Console.WriteLine(game.Description);
-            if (game.Tags != null)
-                Console.WriteLine(string.Join(" ", game.Tags.Select(t => $"|{t}|")));
-            Console.WriteLine();
+            if (!games.Any())
+            {
+                Console.WriteLine("No games to show.");
+                return;
+            }
+
+            foreach (var game in games)
+            {
+                Console.WriteLine($"- {game.Name} ({Math.Round(game.AverageRating, 2)}/5)");
+                Console.WriteLine(game.Description);
+                if (game.Tags != null)
+                    Console.WriteLine(string.Join(" ", game.Tags.Select(t => $"|{t}|")));
+                Console.WriteLine();
+            }
         }
     }
 
@@ -94,6 +106,7 @@ public static class UserDashboard
             user.Games.Remove(input);
             user.HiddenGames.Add(input);
             Console.WriteLine("Game hidden successfully.");
+            Logger.Log($"{user.Login} hid the game: {input}");
         }
 
         Pause();
@@ -117,6 +130,7 @@ public static class UserDashboard
             user.HiddenGames.Remove(input);
             user.Games.Add(input);
             Console.WriteLine("Game restored to library.");
+            Logger.Log($"{user.Login} unhid the game: {input}");
         }
 
         Pause();
@@ -130,8 +144,10 @@ public static class UserDashboard
 
         if (decimal.TryParse(input, out var amount) && amount > 0)
         {
-            AccountManager.CurrentUser!.Balance += amount;
-            Console.WriteLine($"Balance updated. New balance: {AccountManager.CurrentUser.Balance:C}");
+            var user = AccountManager.CurrentUser!;
+            user.Balance += amount;
+            Console.WriteLine($"Balance updated. New balance: {user.Balance:C}");
+            Logger.Log($"{user.Login} topped up balance by {amount:C}");
         }
         else
         {
@@ -141,9 +157,53 @@ public static class UserDashboard
         Pause();
     }
 
+    private static void SearchGames(List<string> gameNames, string listTitle)
+    {
+        Console.Clear();
+        Console.Write($"Enter part of the game name to search in {listTitle}: ");
+        var input = Console.ReadLine()?.Trim();
+
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            Console.WriteLine("Search cancelled.");
+            Pause();
+            return;
+        }
+
+        if (Database.Games != null)
+        {
+            var foundGames = Database.Games
+                .Where(g => gameNames.Contains(g.Name) &&
+                            g.Name.Contains(input, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            Console.Clear();
+            Console.WriteLine($"Search results in {listTitle}:");
+            Console.WriteLine("----------------------------------------------");
+
+            if (!foundGames.Any())
+            {
+                Console.WriteLine("No games found.");
+            }
+            else
+            {
+                foreach (var game in foundGames)
+                {
+                    Console.WriteLine($"- {game.Name} ({Math.Round(game.AverageRating, 2)}/5)");
+                    Console.WriteLine(game.Description);
+                    if (game.Tags != null)
+                        Console.WriteLine(string.Join(" ", game.Tags.Select(t => $"|{t}|")));
+                    Console.WriteLine();
+                }
+            }
+        }
+
+        Pause();
+    }
+
     private static void Pause(string message = "Press any key to continue...")
     {
         Console.WriteLine(message);
-        Console.ReadKey();
+        Console.ReadKey(true);
     }
 }

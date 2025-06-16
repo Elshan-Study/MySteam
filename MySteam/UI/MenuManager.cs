@@ -192,6 +192,6 @@ public static class MenuManager
     private static void Pause(string message = "Press any key to continue...")
     {
         Console.WriteLine(message);
-        Console.ReadKey();
+        Console.ReadKey(true);
     }
 }
