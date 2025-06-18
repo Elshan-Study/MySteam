@@ -7,13 +7,6 @@ namespace MySteam.Models;
 /// </summary>
 public class Comment(string authorName, string authorId, string gameId, string message)
 {
-    // var comment = new Comment(user.Name, user.Id, game.Id, "Крутая игра!");
-    // Database.Comments.Add(comment);
-    // Database.SaveAll();
-    
-    //А чтобы получить комментарии к конкретной игре:
-    //var gameComments = Database.Comments.Where(c => c.GameId == game.Id).ToList();
-
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public string AuthorName { get; set; } = authorName;
     public string AuthorId { get; set; } = authorId;
