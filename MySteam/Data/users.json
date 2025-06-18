@@ -1,0 +1,56 @@
+[
+  {
+    "Id": "fc67eadd-98c9-406d-bacf-d3336df1ad26",
+    "Login": "root",
+    "Name": "root",
+    "Email": "elshanisayev@gmail.com",
+    "Password": "100000.y/EjzOISSAO5qLIkzlSWPQ==./3oeeTQ/pirvOzAALslNaOyorKYOTRDqCypXLoIif1I=",
+    "Balance": 980.01,
+    "Games": [
+      "Celeste"
+    ],
+    "HiddenGames": []
+  },
+  {
+    "Id": "u1",
+    "Login": "root",
+    "Name": "Root User",
+    "Email": "root@example.com",
+    "Password": "100000.y/EjzOISSAO5qLIkzlSWPQ==./3oeeTQ/pirvOzAALslNaOyorKYOTRDqCypXLoIif1I=",
+    "Balance": 50.0,
+    "Games": [
+      "The Witcher 3",
+      "Stardew Valley"
+    ],
+    "HiddenGames": [
+      "Stardew Valley"
+    ]
+  },
+  {
+    "Id": "u2",
+    "Login": "alice123",
+    "Name": "Alice",
+    "Email": "alice@example.com",
+    "Password": "100000.y/EjzOISSAO5qLIkzlSWPQ==./3oeeTQ/pirvOzAALslNaOyorKYOTRDqCypXLoIif1I=",
+    "Balance": 25.5,
+    "Games": [
+      "Celeste",
+      "Hollow Knight"
+    ],
+    "HiddenGames": []
+  },
+  {
+    "Id": "u3",
+    "Login": "bob_gamez",
+    "Name": "Bob",
+    "Email": "bob@example.com",
+    "Password": "100000.y/EjzOISSAO5qLIkzlSWPQ==./3oeeTQ/pirvOzAALslNaOyorKYOTRDqCypXLoIif1I=",
+    "Balance": 100.0,
+    "Games": [
+      "The Witcher 3"
+    ],
+    "HiddenGames": [
+      "Hades"
+    ]
+  }
+]

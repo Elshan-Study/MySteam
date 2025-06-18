@@ -1,0 +1,116 @@
+[
+  {
+    "Id": "g1",
+    "Name": "The Witcher 3",
+    "Description": "An epic role-playing game set in a dark fantasy world.",
+    "Price": 29.99,
+    "Tags": ["RPG", "Open World", "Fantasy"],
+    "Comments": [
+      {
+        "Id": "c1",
+        "AuthorName": "Bob",
+        "AuthorId": "u3",
+        "GameId": "g1",
+        "Message": "Лучшее, что я играл!",
+        "DatePosted": "2024-12-01T18:30:00Z"
+      }
+    ],
+    "Ratings": {
+      "u1": 5,
+      "u2": 4,
+      "u3": 5
+    },
+    "AverageRating": 4.67
+  },
+  {
+    "Id": "g2",
+    "Name": "Stardew Valley",
+    "Description": "A relaxing farming simulator with RPG elements.",
+    "Price": 14.99,
+    "Tags": ["Indie", "Farming", "Relaxing"],
+    "Comments": [
+      {
+        "Id": "c2",
+        "AuthorName": "Root User",
+        "AuthorId": "u1",
+        "GameId": "g2",
+        "Message": "Уютная и добрая игра, приятно возвращаться.",
+        "DatePosted": "2025-01-15T11:00:00Z"
+      }
+    ],
+    "Ratings": {
+      "u1": 5,
+      "u2": 5,
+      "u3": 4,
+      "u4": 3
+    },
+    "AverageRating": 4.25
+  },
+  {
+    "Id": "g3",
+    "Name": "Celeste",
+    "Description": "A platformer about climbing a mountain and overcoming yourself.",
+    "Price": 19.99,
+    "Tags": ["Platformer", "Indie", "Pixel Art"],
+    "Comments": [
+      {
+        "Id": "c3",
+        "AuthorName": "Alice",
+        "AuthorId": "u2",
+        "GameId": "g3",
+        "Message": "Трогательная история и потрясающий саундтрек!",
+        "DatePosted": "2025-03-10T08:45:00Z"
+      },
+      {
+        "Id": "d4aaa43d-a917-41b5-b8d3-76236462551e",
+        "AuthorName": "root",
+        "AuthorId": "fc67eadd-98c9-406d-bacf-d3336df1ad26",
+        "GameId": "g3",
+        "Message": "Good",
+        "DatePosted": "2025-06-16T17:50:44.71037Z"
+      }
+    ],
+    "Ratings": {
+      "u2": 5,
+      "fc67eadd-98c9-406d-bacf-d3336df1ad26": 5
+    },
+    "AverageRating": 5.0
+  },
+  {
+    "Id": "g4",
+    "Name": "Hollow Knight",
+    "Description": "An atmospheric Metroidvania game set in a vast underground world.",
+    "Price": 17.99,
+    "Tags": ["Metroidvania", "Action", "Indie"],
+    "Comments": [],
+    "Ratings": {
+      "u1": 4,
+      "u2": 4,
+      "u3": 5
+    },
+    "AverageRating": 4.33
+  },
+  {
+    "Id": "g5",
+    "Name": "Hades",
+    "Description": "A rogue-like dungeon crawler from Supergiant Games.",
+    "Price": 24.99,
+    "Tags": ["Rogue-like", "Action", "Greek Mythology"],
+    "Comments": [
+      {
+        "Id": "c4",
+        "AuthorName": "Bob",
+        "AuthorId": "u3",
+        "GameId": "g5",
+        "Message": "Каждый забег — удовольствие.",
+        "DatePosted": "2025-04-20T13:15:00Z"
+      }
+    ],
+    "Ratings": {
+      "u1": 5,
+      "u2": 5,
+      "u3": 5
+    },
+    "AverageRating": 5.0
+  }
+]
